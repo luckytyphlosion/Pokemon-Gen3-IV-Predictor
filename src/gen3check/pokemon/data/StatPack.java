@@ -1,8 +1,7 @@
 package gen3check.pokemon.data;
 
 public class StatPack {
-	public StatPack()
-    {
+    public StatPack() {
         this.hp = 0;
         this.atk = 0;
         this.def = 0;
@@ -10,9 +9,8 @@ public class StatPack {
         this.spd = 0;
         this.spe = 0;
     }
-    public StatPack(int hp, int atk, int def,
-        int spa, int spd, int spe)
-    {
+
+    public StatPack(int hp, int atk, int def, int spa, int spd, int spe) {
         this.hp = hp;
         this.atk = atk;
         this.def = def;
@@ -20,8 +18,8 @@ public class StatPack {
         this.spd = spd;
         this.spe = spe;
     }
-    public StatPack(int generic)
-    {
+
+    public StatPack(int generic) {
         this.hp = generic;
         this.atk = generic;
         this.def = generic;
@@ -30,41 +28,49 @@ public class StatPack {
         this.spe = generic;
     }
 
-    public int getStat(int i)
-    {
-        switch (i)
-        {
-            case 0: return hp;
-            case 1: return atk;
-            case 2: return def;
-            case 3: return spa;
-            case 4: return spd;
-            case 5: return spe;
-            default: return -1;
+    public int getStat(int i) {
+        switch (i) {
+        case 0:
+            return hp;
+        case 1:
+            return atk;
+        case 2:
+            return def;
+        case 3:
+            return spa;
+        case 4:
+            return spd;
+        case 5:
+            return spe;
+        default:
+            return -1;
         }
     }
 
-    public void setStat(int i, int value)
-    {
-        switch (i)
-        {
-            case 0: this.hp = value;
-                break;
-            case 1: this.atk = value;
-                break;
-            case 2: this.def = value;
-                break;
-            case 3: this.spa = value;
-                break;
-            case 4: this.spd = value;
-                break;
-            case 5: this.spe = value;
-                break;
+    public void setStat(int i, int value) {
+        switch (i) {
+        case 0:
+            this.hp = value;
+            break;
+        case 1:
+            this.atk = value;
+            break;
+        case 2:
+            this.def = value;
+            break;
+        case 3:
+            this.spa = value;
+            break;
+        case 4:
+            this.spd = value;
+            break;
+        case 5:
+            this.spe = value;
+            break;
         }
     }
 
-    public StatPack getCopy()
-    {
+    public StatPack getCopy() {
         return new StatPack(this.hp, this.atk, this.def, this.spa, this.spd, this.spe);
     }
 

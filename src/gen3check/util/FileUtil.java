@@ -17,14 +17,14 @@ import gen3check.pokemon.data.PokemonItem;
 import gen3check.pokemon.data.StatPack;
 
 public class FileUtil {
-	
-	public static final String ABILITIES = "abilities.csv";
-	public static final String ABILITIES_BY_PKM = "abilitiesByPokemon.csv";
-	public static final String ITEMS = "items.csv";
-	public static final String MOVES = "moves.csv";
-	public static final String POKEMON = "pokemon.csv";
-	public static final String POKEMON_BASESTATS = "pokemonBaseStats.csv";
-	public static final String POKEMON_EVOLUTION = "pokemonEvolution.csv";
-	public static final String POKEMON_EXP = "pokemonExp.csv";
-	public static final String POKEMON_EXP_TYPE = "pokemonExpType.csv";
+
+    public static final String ABILITIES = "abilities.csv";
+    public static final String ABILITIES_BY_PKM = "abilitiesByPokemon.csv";
+    public static final String ITEMS = "items.csv";
+    public static final String MOVES = "moves.csv";
+    public static final String POKEMON = "pokemon.csv";
+    public static final String POKEMON_BASESTATS = "pokemonBaseStats.csv";
+    public static final String POKEMON_EVOLUTION = "pokemonEvolution.csv";
+    public static final String POKEMON_EXP = "pokemonExp.csv";
+    public static final String POKEMON_EXP_TYPE = "pokemonExpType.csv";
 }
