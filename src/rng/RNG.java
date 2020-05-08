@@ -1,6 +1,26 @@
 package rng;
 
+import java.math.BigInteger;
+
 public class RNG {
+    public static final int MULTIPLIER = 0x41C64E61;
+    public static final int ADDEND = 0x6073;
+    public static final long MODULUS = 0x100000000L;
+    public static final int MULTIPLIER_INVERSE;
+
+    // The following are helpful to calculate RNG in O(log n)
+    private static final int[] a;
+    private static final int[] b;
+
+    private int value;
+    private int frame;
+
+    static {
+        a = new int[32];
+        b = new int[32];
+        MULTIPLIER_INVERSE = genLCGConstants();
+    }
+
     public RNG(int v) {
         this.value = v;
         this.frame = 0;
@@ -17,8 +37,13 @@ public class RNG {
     }
 
     public void advance() {
-        this.value = this.value * 0x41C64E6D + 0x6073;
+        this.value = this.value * MULTIPLIER + ADDEND;
         this.frame++;
+    }
+
+    public int getAndAdvance() {
+        this.advance();
+        return this.getTop();
     }
 
     public void advance(int n) {
@@ -35,7 +60,7 @@ public class RNG {
     }
 
     public void decrease() {
-        this.value = this.value * 0XEEB9EB65 + 0XA3561A1;
+        this.value = (this.value - ADDEND) * MULTIPLIER_INVERSE;
         this.frame--;
     }
 
@@ -51,7 +76,7 @@ public class RNG {
             this.advance(diff);
         } else {
             for (int i = 0; i < diff; i++) {
-                this.value = this.value * 0XEEB9EB65 + 0XA3561A1; // backwards formula
+                this.value = (this.value - ADDEND) * MULTIPLIER_INVERSE; // backwards formula
             }
         }
         this.frame = n;
@@ -81,20 +106,20 @@ public class RNG {
         return this.getTop() % check;
     }
 
-    private int value;
-    private int frame;
-
-    // The following are helpful to calculate RNG in O(log n)
-
-    private int[] a = { 0x41C64E6D, 0xC2A29A69, 0xEE067F11, 0xCFDDDF21, 0x5F748241, 0x8B2E1481, 0x76006901, 0x1711D201,
-        0xBE67A401, 0xDDDF4801, 0x3FFE9001, 0x90FD2001, 0x65FA4001, 0xDBF48001, 0xF7E90001, 0xEFD20001, 0xDFA40001,
-        0xBF480001, 0x7E900001, 0xFD200001, 0xFA400001, 0xF4800001, 0xE9000001, 0xD2000001, 0xA4000001, 0x48000001,
-        0x90000001, 0x20000001, 0x40000001, 0x80000001, 0x00000001, 0x00000001 };
-
-    private int[] b = { 0x00006073, 0xE97E7B6A, 0x31B0DDE4, 0x67DBB608, 0xCBA72510, 0x1D29AE20, 0xBA84EC40, 0x79F01880,
-        0x08793100, 0x6B566200, 0x803CC400, 0xA6B98800, 0xE6731000, 0x30E62000, 0xF1CC4000, 0x23988000, 0x47310000,
-        0x8E620000, 0x1CC40000, 0x39880000, 0x73100000, 0xE6200000, 0xCC400000, 0x98800000, 0x31000000, 0x62000000,
-        0xC4000000, 0x88000000, 0x10000000, 0x20000000, 0x40000000, 0x80000000 };
+    public static int genLCGConstants() {
+        BigInteger multiplier = BigInteger.valueOf(MULTIPLIER);
+        BigInteger addend = BigInteger.valueOf(ADDEND);
+        BigInteger modulus = BigInteger.valueOf(MODULUS);
+        BigInteger multiplierMinusOne = BigInteger.valueOf(MULTIPLIER - 1);
+        BigInteger multiplierMinusOneTimesModulus = multiplierMinusOne.multiply(modulus);
+        
+        for (int i = 0; i < 32; i++) {
+            BigInteger n = BigInteger.valueOf(1 << i);
+            RNG.a[i] = (int)multiplier.modPow(n, modulus).longValueExact();
+            RNG.b[i] = (int)multiplier.modPow(n, multiplierMinusOneTimesModulus).subtract(BigInteger.ONE).divide(multiplierMinusOne).multiply(addend).longValueExact();
+        }
+        return (int)multiplier.modInverse(modulus).longValueExact();
+    }
 
     public void copy(RNG rng1) {
         this.value = rng1.getValue();

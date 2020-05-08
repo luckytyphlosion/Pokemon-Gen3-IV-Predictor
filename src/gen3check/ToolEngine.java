@@ -99,6 +99,7 @@ public class ToolEngine {
                                 }
                                 curClusterSize++;
                             } else if (curClusterSize == 1) {
+                                //System.out.println("curClusterFrame when curClusterSize == 1: " + i);
                                 lastPokemonFoundData = new PokemonFoundData(pkmRNG, i);
                                 curClusterFrame = i;
                                 curClusterListIndex = tempEventList.size();
@@ -116,7 +117,7 @@ public class ToolEngine {
                                 }
                                 curClusterFrame = i;
                                 curClusterScore = 0;
-                                curClusterListIndex = tempEventList.size() - 1;
+                                curClusterListIndex = tempEventList.size();
                             } else {
                                 System.out.println("Missed case!");
                             }
@@ -134,7 +135,7 @@ public class ToolEngine {
             PokemonFoundData pokemonFoundData = tempEventList.get(i);
             if (i == bestClusterListIndex && pokemonFoundData.getFrame() != bestClusterFrame) {
                 System.out.printf("bestClusterListIndex doesn't match bestClusterFrame! bestClusterFrame: %d, getFrame(): %d\n",
-                        bestClusterFrame - PokemonFoundPanel.FIXED_RNG_ADVANCES, pokemonFoundData.getFrame() - PokemonFoundPanel.FIXED_RNG_ADVANCES);
+                        bestClusterFrame, pokemonFoundData.getFrame());
             } if (pokemonFoundData.getFrame() == bestClusterEndFrame) {
                 break;
             }
@@ -143,7 +144,7 @@ public class ToolEngine {
 
         this.elc.update();
 
-        System.out.printf("bestClusterScore: %d, bestClusterFrame: %d\n", bestClusterScore, bestClusterFrame - PokemonFoundPanel.FIXED_RNG_ADVANCES);
+        System.out.printf("bestClusterScore: %d, bestClusterFrame: %d\n", bestClusterScore, bestClusterFrame);
         
         
     }

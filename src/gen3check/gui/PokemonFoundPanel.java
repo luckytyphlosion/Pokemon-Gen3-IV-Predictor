@@ -32,7 +32,8 @@ import rng.Seed;
 
 public class PokemonFoundPanel extends JPanel {
     static final long serialVersionUID = 547805783;
-    public static final int FIXED_RNG_ADVANCES = 111 + 1; // 105 fixed calls, plus one extra frame after pressing A
+    // 111 fixed calls, plus one extra frame after pressing A, minus 24 frames between pressing A and RNG being seeded
+    public static final int FIXED_RNG_ADVANCES = 111 + 1 - 24;
     public static final boolean PRE_STATIC_GIFT_IV_FIX = true;
 
     final DefaultTableModel model = new DefaultTableModel() {
@@ -98,7 +99,7 @@ public class PokemonFoundPanel extends JPanel {
                                         gender_str = "F";
                                     else if (gr == GenderRate.Genderless)
                                         gender_str = "-";
-                                    int frame_aux = pokemonList.get(i).getFrame() - FIXED_RNG_ADVANCES;
+                                    int frame_aux = pokemonList.get(i).getFrame();
                                     HiddenPowerRNG hpow = new HiddenPowerRNG(pokemon_aux);
                                     model.addRow(new Object[] { frame_aux,
                                         Integer.toString(frame_aux / 3600) + ":"
@@ -179,7 +180,7 @@ public class PokemonFoundPanel extends JPanel {
                 gender_str = "F";
             else if (gr == GenderRate.Genderless)
                 gender_str = "-";
-            int frame_aux = pokemonList.get(i).getFrame() - FIXED_RNG_ADVANCES;
+            int frame_aux = pokemonList.get(i).getFrame();
             HiddenPowerRNG hpow = new HiddenPowerRNG(pokemon_aux);
             model.addRow(new Object[] { frame_aux,
                 Integer.toString(frame_aux / 3600) + ":" + String.format("%02d", (frame_aux / 60) % 60) + "."
