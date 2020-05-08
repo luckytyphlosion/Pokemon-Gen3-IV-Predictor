@@ -67,6 +67,17 @@ public class PokemonData extends Data {
         return list;
     }
 
+    @Override
+    public int compareTo(Data other) {
+        if (this.n < other.n) {
+            return -1;
+        } else if (this.n > other.n) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     public static int POKEMON_N = 649;
     public static int POKEMON_3GEN = 386;
 

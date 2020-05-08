@@ -45,14 +45,28 @@ public class PokemonRNG {
         int top;
         rng.advance();
         top = rng.getTop();
+        
         this.hp = top % 32;
+        this.seenHp = this.hp;
+        
         this.atk = (top / 32) % 32;
+        this.seenAtk = this.atk;
+
         this.def = (top / 1024) % 32;
+        this.seenDef = this.def;
+
         rng.advance();
         top = rng.getTop();
+
         this.spe = top % 32;
+        this.seenSpe = this.spe;
+
         this.spa = (top / 32) % 32;
+        this.seenSpa = this.spa;
+
         this.spd = (top / 1024) % 32;
+        this.seenSpd = this.spd;
+
         int genderAux = (int) (this.pid & 0xFF);
         if (genderAux < 31)
             this.minGender = 12;
@@ -74,8 +88,12 @@ public class PokemonRNG {
         return (int) (this.pid & 0xFFFF);
     }
 
-    public boolean isShiny(int tid, int sid) {
-        return (tid ^ sid ^ (getLowPid() ^ getTopPid())) < 8;
+    public boolean isShiny() {
+        return this.shiny;
+    }
+
+    public void setShiny() {
+        this.shiny = true;
     }
 
     public boolean isFemale(GenderRate gr) {
@@ -103,5 +121,7 @@ public class PokemonRNG {
     public long pid;
     public Nature nature;
     public int hp, atk, def, spa, spd, spe;
+    public int seenHp, seenAtk, seenDef, seenSpa, seenSpd, seenSpe;
     private int minGender;
+    private boolean shiny;
 }

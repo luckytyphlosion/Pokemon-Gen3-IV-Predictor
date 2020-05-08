@@ -1,7 +1,11 @@
 package gen3check;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JCheckBox;
 
+import gen3check.gui.PokemonFoundPanel;
 import gen3check.observers.PokemonListContainerObserver;
 import gen3check.pokemon.data.StatPack;
 import rng.*;
@@ -51,9 +55,22 @@ public class ToolEngine {
         this.elc.setPokemonID(pokemonID);
         this.elc.setTrainerID(trainerID);
         Seed s = new Seed(trainerID);
+        List<PokemonFoundData> tempEventList = new ArrayList<>();
+        PokemonFoundData lastPokemonFoundData = null;
+        int curClusterSize = 0;
+        int curClusterScore = 0;
+        int bestClusterScore = 1;
+        int curClusterFrame = minFrame;
+        int bestClusterFrame = minFrame;
+        int bestClusterEndFrame = maxFrame;
+        int curClusterListIndex = 0;
+        int bestClusterListIndex = 0;
+
+        boolean addClusters = true;
+
         for (int i = minFrame; i <= maxFrame; i++) {
             PokemonRNG pkmRNG = new PokemonMethod1(s, i);
-            if (natures[pkmRNG.nature.getID()].isSelected()) {
+            if (natures[pkmRNG.nature.getID()].isSelected() && !pkmRNG.isShiny()) {
                 StatPack sp = new StatPack(spneutral.hp, spneutral.atk, spneutral.def, spneutral.spa, spneutral.spd,
                     spneutral.spe);
                 for (int k = 1; k < 6; k++) {
@@ -64,11 +81,71 @@ public class ToolEngine {
                 }
                 if (sp.hp <= pkmRNG.hp && sp.atk <= pkmRNG.atk && sp.def <= pkmRNG.def && sp.spa <= pkmRNG.spa
                     && sp.spd <= pkmRNG.spd && sp.spe <= pkmRNG.spe) {
-                    this.elc.addPokemon(new PokemonFoundData(pkmRNG, i));
+                    if (addClusters) {
+                        if (lastPokemonFoundData == null) {
+                            lastPokemonFoundData = new PokemonFoundData(pkmRNG, i);
+                            curClusterFrame = i;
+                            curClusterListIndex = 0;
+                            curClusterSize++;
+                        } else {
+                            int diff = i - lastPokemonFoundData.getFrame();
+                            if (diff <= 2) {
+                                tempEventList.add(lastPokemonFoundData);
+                                lastPokemonFoundData = new PokemonFoundData(pkmRNG, i);
+                                if (diff == 2) {
+                                    curClusterScore++;
+                                } else if (diff == 1) {
+                                    curClusterScore += 2;
+                                }
+                                curClusterSize++;
+                            } else if (curClusterSize == 1) {
+                                lastPokemonFoundData = new PokemonFoundData(pkmRNG, i);
+                                curClusterFrame = i;
+                                curClusterListIndex = tempEventList.size();
+                                curClusterScore = 0;
+                                // curClusterSize = 1;
+                            } else if (curClusterSize > 1) {
+                                tempEventList.add(lastPokemonFoundData);
+                                lastPokemonFoundData = new PokemonFoundData(pkmRNG, i);
+                                curClusterSize = 1;
+                                if (curClusterScore > bestClusterScore) {
+                                    bestClusterFrame = curClusterFrame;
+                                    bestClusterScore = curClusterScore;
+                                    bestClusterEndFrame = i;
+                                    bestClusterListIndex = curClusterListIndex;
+                                }
+                                curClusterFrame = i;
+                                curClusterScore = 0;
+                                curClusterListIndex = tempEventList.size() - 1;
+                            } else {
+                                System.out.println("Missed case!");
+                            }
+                        }
+                    } else {
+                        this.elc.addPokemon(new PokemonFoundData(pkmRNG, i));
+                    }
                 }
+                this.elc.update();
             }
-            this.elc.update();
         }
+        
+        // lazy, fix later
+        for (int i = bestClusterListIndex; i < tempEventList.size(); i++) {
+            PokemonFoundData pokemonFoundData = tempEventList.get(i);
+            if (i == bestClusterListIndex && pokemonFoundData.getFrame() != bestClusterFrame) {
+                System.out.printf("bestClusterListIndex doesn't match bestClusterFrame! bestClusterFrame: %d, getFrame(): %d\n",
+                        bestClusterFrame - PokemonFoundPanel.FIXED_RNG_ADVANCES, pokemonFoundData.getFrame() - PokemonFoundPanel.FIXED_RNG_ADVANCES);
+            } if (pokemonFoundData.getFrame() == bestClusterEndFrame) {
+                break;
+            }
+            this.elc.addPokemon(pokemonFoundData);
+        }
+
+        this.elc.update();
+
+        System.out.printf("bestClusterScore: %d, bestClusterFrame: %d\n", bestClusterScore, bestClusterFrame - PokemonFoundPanel.FIXED_RNG_ADVANCES);
+        
+        
     }
 
 }
