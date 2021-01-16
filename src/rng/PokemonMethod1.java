@@ -11,7 +11,15 @@ public class PokemonMethod1 extends PokemonRNG {
     }
 
     public PokemonMethod1(Seed seed, int frame) {
-        this.frame = frame + PokemonFoundPanel.FIXED_RNG_ADVANCES;
+        this(seed, frame, true);
+    }
+
+    public PokemonMethod1(Seed seed, int frame, boolean addFixedRNGAdvances) {
+        if (addFixedRNGAdvances) {
+            this.frame = frame + PokemonFoundPanel.FIXED_RNG_ADVANCES;
+        } else {
+            this.frame = frame;
+        }
         RNG rng1 = new RNG(seed);
         RNG rng2 = new RNG(seed);
         rng1.advance(this.frame);
@@ -92,9 +100,19 @@ public class PokemonMethod1 extends PokemonRNG {
         }
     }
 
+    public static void tryFindPossibleIVs() {
+        for (int i = 0; i < 65536; i++) {
+            Seed seed = new Seed(i);
+            for (int j = 320; j < 360; j++) {
+                
+            }
+        }
+    }
+
     public static void main(String[] args) {
         PokemonMethod1 pkmRNG = new PokemonMethod1(0x8c6b6616);
-        System.out.printf("IVs: %d HP/%d Atk/%d Def/%d SpA/%d SpD/%d Spd\nNature: %s\nPID: 0x%08x",
-            pkmRNG.hp, pkmRNG.atk, pkmRNG.def, pkmRNG.spa, pkmRNG.spd, pkmRNG.spe, pkmRNG.nature, pkmRNG.pid);
+
+        //System.out.printf("IVs: %d HP/%d Atk/%d Def/%d SpA/%d SpD/%d Spd\nNature: %s\nPID: 0x%08x",
+        //    pkmRNG.hp, pkmRNG.atk, pkmRNG.def, pkmRNG.spa, pkmRNG.spd, pkmRNG.spe, pkmRNG.nature, pkmRNG.pid);
     }
 }

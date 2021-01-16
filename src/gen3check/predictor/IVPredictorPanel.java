@@ -98,34 +98,37 @@ public class IVPredictorPanel extends JPanel {
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
 
-        Seed s = new Seed(this.trainerID);
-        Pokemon p = new Pokemon(pokemonID, 5, new StatPack(0), new StatPack(0), nature, new Ability(0),
-            new PokemonItem(0), false);
-        for (int i = minFrame; i <= maxFrame; i++) {
-            PokemonRNG pkmRNG = new PokemonMethod1(s, i);
-            if (pkmRNG.nature.getID() != nature.getID())
-                continue;
-            p.IV.hp = pkmRNG.hp;
-            p.IV.atk = pkmRNG.atk;
-            p.IV.def = pkmRNG.def;
-            p.IV.spa = pkmRNG.spa;
-            p.IV.spd = pkmRNG.spd;
-            p.IV.spe = pkmRNG.spe;
-            p.calculateStats();
-            if ((p.stat.hp == stat.hp || stat.hp == 0) && (p.stat.atk == stat.atk || stat.atk == 0)
-                && (p.stat.def == stat.def || stat.def == 0) && (p.stat.spa == stat.spa || stat.spa == 0)
-                && (p.stat.spd == stat.spd || stat.spd == 0) && (p.stat.spe == stat.spe || stat.spe == 0)) {
-                GenderRate gr = p.getBaseData().genderRate;
-                String gender_str = "M";
-                if (pkmRNG.isFemale(gr))
-                    gender_str = "F";
-                else if (gr == GenderRate.Genderless)
-                    gender_str = "-";
-                model.addRow(new Object[] { i, p.IV.hp, p.IV.atk, p.IV.def, p.IV.spa, p.IV.spd, p.IV.spe, gender_str,
-                    p.getHiddenPowerType(), p.getHiddenPowerDamage() });
-                rowsAdded = true;
+        for (int curSeed = 0; curSeed < 65536; curSeed++) {
+            Seed s = new Seed(curSeed);
+            Pokemon p = new Pokemon(pokemonID, 5, new StatPack(0), new StatPack(0), nature, new Ability(0),
+                new PokemonItem(0), false);
+            for (int i = minFrame; i <= maxFrame; i++) {
+                PokemonRNG pkmRNG = new PokemonMethod1(s, i + 8, false);
+                if (pkmRNG.nature.getID() != nature.getID())
+                    continue;
+                p.IV.hp = pkmRNG.hp;
+                p.IV.atk = pkmRNG.atk;
+                p.IV.def = pkmRNG.def;
+                p.IV.spa = pkmRNG.spa;
+                p.IV.spd = pkmRNG.spd;
+                p.IV.spe = pkmRNG.spe;
+                p.calculateStats();
+                if ((p.stat.hp == stat.hp || stat.hp == 0) && (p.stat.atk == stat.atk || stat.atk == 0)
+                    && (p.stat.def == stat.def || stat.def == 0) && (p.stat.spa == stat.spa || stat.spa == 0)
+                    && (p.stat.spd == stat.spd || stat.spd == 0) && (p.stat.spe == stat.spe || stat.spe == 0)) {
+                    GenderRate gr = p.getBaseData().genderRate;
+                    String gender_str = "M";
+                    if (pkmRNG.isFemale(gr))
+                        gender_str = "F";
+                    else if (gr == GenderRate.Genderless)
+                        gender_str = "-";
+                    model.addRow(new Object[] { i, p.IV.hp, p.IV.atk, p.IV.def, p.IV.spa, p.IV.spd, p.IV.spe, gender_str,
+                        p.getHiddenPowerType(), p.getHiddenPowerDamage() });
+                    rowsAdded = true;
+                }
             }
         }
+
 
         model.fireTableDataChanged();
         if (rowsAdded) {
